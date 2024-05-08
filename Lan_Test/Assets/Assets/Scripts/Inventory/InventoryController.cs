@@ -10,25 +10,19 @@ namespace Inventory
 {
     public class InventoryController : NetworkBehaviour
     {
-        public UIInventoryPage inventoryUI; // ��������� �� UI ��������
+        public UIInventoryPage inventoryUI;
 
-        public InventorySO inventoryData; // ���� ��������� (ScriptableObject)
+        public InventorySO inventoryData;
 
-        public List<InventoryItem> initialItems = new List<InventoryItem>(); // �������� ��������
+        public List<InventoryItem> initialItems = new List<InventoryItem>(); 
 
-        // �����, ���� ����������� ��� �����
-
-        public override void OnStartServer()
+        public override void OnStartLocalPlayer()
         {
-            base.OnStartServer();
-            inventoryUI = GetComponent<UIInventoryPage>();
-        }
-
-        public void Start()
-        {
-            PrepareUI(); // ϳ�������� UI
+            base.OnStartLocalPlayer();
+            inventoryUI = FindObjectOfType<UIInventoryPage>();
+            PrepareUI();
             PrepareInventoryData();
-                 // ϳ�������� ����� ���������
+            inventoryUI.gameObject.SetActive(false);
         }
 
         // ϳ�������� ����� ���������
@@ -145,7 +139,8 @@ namespace Inventory
         // ��������� � ������� ����
         public void Update()
         {
-            // �������� ���������� ������ I ��� Tab
+            
+            if (!isLocalPlayer) { return; }
             if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab))
             {
                 // ��������, �� ��������� ��������� ����������

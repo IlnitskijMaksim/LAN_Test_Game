@@ -31,8 +31,6 @@ namespace Inventory.UI
             {
                 Destroy(transformChildrenObjects.gameObject);
             }
-        }
-
-        
+        }  
     }
 }

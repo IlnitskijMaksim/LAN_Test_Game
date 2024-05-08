@@ -12,6 +12,9 @@ public class PlayerController : NetworkBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     [SerializeField] private CinemachineVirtualCamera cinemachineVirtualCamera;
+    private UIInventoryPage inventoryUI;
+    [SerializeField] private bool facingRight = true;
+
 
     private void Start()
     {
@@ -22,6 +25,7 @@ public class PlayerController : NetworkBehaviour
         {
             cinemachineVirtualCamera = CinemachineVirtualCamera.FindAnyObjectByType<CinemachineVirtualCamera>();
             cinemachineVirtualCamera.Follow = this.gameObject.transform;
+            inventoryUI = FindObjectOfType<UIInventoryPage>();
         }
     }
 
@@ -32,14 +36,15 @@ public class PlayerController : NetworkBehaviour
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3 playerPosition = transform.position;
 
-            if (mousePosition.x < playerPosition.x)
+            if (mousePosition.x < playerPosition.x && facingRight)
             {
-                spriteRenderer.flipX = true;
+                CmdFlipSprite(false);
             }
-            else
+            else if (mousePosition.x > playerPosition.x && !facingRight)
             {
-                spriteRenderer.flipX = false;
+                CmdFlipSprite(true);
             }
+
 
             float inputX = Input.GetAxis("Horizontal");
             float inputY = Input.GetAxis("Vertical");
@@ -48,5 +53,18 @@ public class PlayerController : NetworkBehaviour
 
             rb.velocity = movement * speed;
         }
+    }
+
+    [Command]
+    void CmdFlipSprite(bool facingRight)
+    {
+        RpcFlipSprite(facingRight);
+        this.facingRight = facingRight;
+    }
+
+    [ClientRpc]
+    void RpcFlipSprite(bool facingRight)
+    {
+        spriteRenderer.flipX = !facingRight;
     }
 }
