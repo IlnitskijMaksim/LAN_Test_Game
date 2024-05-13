@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public abstract class AbstractDungeonGenerator : MonoBehaviour
+public abstract class AbstractDungeonGenerator : NetworkBehaviour
 {
     [SerializeField]
     protected TilemapVisualizer tilemapVisualizer = null;

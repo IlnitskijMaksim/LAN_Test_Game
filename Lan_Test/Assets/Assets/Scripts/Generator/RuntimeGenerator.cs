@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Mirror;
 
-public class MapRuntimeGenerator : MonoBehaviour
+public class MapRuntimeGenerator : NetworkBehaviour
 {
     public UnityEvent OnStart;
-    // Start is called before the first frame update
-    void Start()
+
+    public override void OnStartServer()
     {
+        base.OnStartServer();
         OnStart?.Invoke();
     }
-
 }

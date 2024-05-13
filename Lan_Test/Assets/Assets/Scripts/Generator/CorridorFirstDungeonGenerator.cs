@@ -6,6 +6,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.Events;
 using NavMeshPlus.Components;
+using Mirror;
 
 // Клас для генерації данжу
 public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
@@ -41,15 +42,18 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     // Перевизначений метод для запуску процесу генерації
     protected override void RunProceduralGeneration()
     {
-        CorridorFirstGeneration();
-        DungeonData data = new DungeonData
+        if(isServer)
         {
-            roomsDictionary = this.roomsDictionary,
-            corridorPositions = this.corridorPositions,
-            floorPositions = this.floorPositions
-        };
-        OnDungeonFloorReady?.Invoke(data);
-        BakeNavMesh();
+            CorridorFirstGeneration();
+            DungeonData data = new DungeonData
+            {
+                roomsDictionary = this.roomsDictionary,
+                corridorPositions = this.corridorPositions,
+                floorPositions = this.floorPositions
+            };
+            OnDungeonFloorReady?.Invoke(data);
+            BakeNavMesh();
+        }
     }
 
     // Метод для генерації данжу

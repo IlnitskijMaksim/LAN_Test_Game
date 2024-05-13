@@ -1,8 +1,9 @@
 using Inventory.UI;
 using System.Collections;
 using UnityEngine;
+using Mirror;
 
-public class Sword : MonoBehaviour
+public class Sword : NetworkBehaviour
 {
     public Animator animatorSword;
     public float delay = 0.3f;
@@ -18,6 +19,8 @@ public class Sword : MonoBehaviour
 
     private void Update()
     {
+        if (!isLocalPlayer) { return; }
+
         if (!inventory || !inventory.IsInventoryOpen())
         {
             if (Input.GetKey(KeyCode.Mouse0))
@@ -61,6 +64,8 @@ public class Sword : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!isLocalPlayer) { return; }
+
         if (Input.GetKey(KeyCode.Mouse0))
         {
             if (!other.gameObject.CompareTag("Player"))

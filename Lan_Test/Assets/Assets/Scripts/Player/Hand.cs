@@ -1,18 +1,19 @@
-using System.Collections;
 using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class Hand : NetworkBehaviour
 {
     public float offset;
     private bool isCodeDisabled = false;
     private float currentDelay = 0.3f;
-    [SerializeField] private bool facingRight = true;
 
+    [SyncVar(hook = nameof(OnLookDirectionChanged))]
+    private Vector3 syncLookDirection;
 
     void Update()
     {
-        if (!PauseMenu.GameIsPaused && isLocalPlayer)
+        if (isLocalPlayer)
         {
             if (!isCodeDisabled)
             {
@@ -21,15 +22,16 @@ public class Hand : NetworkBehaviour
                 transform.rotation = Quaternion.Euler(0f, 0f, rotateWeapon + offset);
 
                 Vector2 scale = transform.localScale;
+                if (direction.x < 0)
+                {
+                    scale.y = -1;
+                }
+                else if (direction.x > 0)
+                {
+                    scale.y = 1;
+                }
 
-                if (direction.x < 0 && facingRight)
-                {
-                    CmdFlipWeapon(false);
-                }
-                else if (direction.x > 0 && !facingRight)
-                {
-                    CmdFlipWeapon(true);
-                }
+                transform.localScale = scale;
 
                 if (Input.GetMouseButton(0))
                 {
@@ -37,7 +39,8 @@ public class Hand : NetworkBehaviour
                     StartCoroutine(DisableCodeForDuration(currentDelay));
                 }
 
-                CmdSetMouseDirection(direction.normalized);
+                // Обновляем направление взгляда на сервере только для локального игрока
+                CmdUpdateLookDirection(direction.normalized);
             }
         }
     }
@@ -50,46 +53,15 @@ public class Hand : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSetMouseDirection(Vector2 direction)
+    private void CmdUpdateLookDirection(Vector3 direction)
     {
-        RpcSetMouseDirection(direction);
+        syncLookDirection = direction;
     }
 
-    [Command]
-    void CmdFlipWeapon(bool facingRight)
+    private void OnLookDirectionChanged(Vector3 oldValue, Vector3 newValue)
     {
-        RpcFlipWeapon(facingRight);
-        this.facingRight = facingRight;
-    }
-
-    [ClientRpc]
-    void RpcFlipWeapon(bool facingRight)
-    {
-        Vector2 scale = transform.localScale;
-        scale.y = facingRight ? 1 : -1;
-        transform.localScale = scale;
-    }
-
-    [ClientRpc]
-    private void RpcSetMouseDirection(Vector2 direction)
-    {
-        if (isLocalPlayer)
-        {
-            float rotateWeapon = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, 0f, rotateWeapon + offset);
-
-            Vector2 scale = transform.localScale;
-
-            if (direction.x < 0)
-            {
-                scale.y = -1;
-            }
-            else if (direction.x > 0)
-            {
-                scale.y = 1;
-            }
-
-            transform.localScale = scale;
-        }
+        // Поворачиваем руку у удаленных игроков
+        float rotateWeapon = Mathf.Atan2(newValue.y, newValue.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, rotateWeapon + offset);
     }
 }

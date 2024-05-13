@@ -2259,12 +2259,12 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/Menu.unity
   onlineScene: Assets/Scenes/SampleSceneMultiplayer.unity
   transport: {fileID: 1345144029}
-  networkAddress: localhost
+  networkAddress: 26.50.91.35
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 5145209961115006881, guid: 0dc61390e296f3f4fb9659ea85c14fb8, type: 3}
+  playerPrefab: {fileID: 4868042714608660376, guid: 0dc61390e296f3f4fb9659ea85c14fb8, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
