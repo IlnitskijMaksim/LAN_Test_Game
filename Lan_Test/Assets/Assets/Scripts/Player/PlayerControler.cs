@@ -25,7 +25,6 @@ public class PlayerController : NetworkBehaviour
         {
             cinemachineVirtualCamera = CinemachineVirtualCamera.FindAnyObjectByType<CinemachineVirtualCamera>();
             cinemachineVirtualCamera.Follow = this.gameObject.transform;
-            inventoryUI = FindObjectOfType<UIInventoryPage>();
         }
     }
 
