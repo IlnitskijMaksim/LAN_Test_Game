@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,7 @@ public class PauseMenu : MonoBehaviour
                 Pause();
             }
         }
+        
     }
 
     public void Resume()
